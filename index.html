@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ระบบดูรหัสผ่านGoodnotes 6</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap");
+
+      body {
+        font-family: "Sarabun", sans-serif;
+        background-color: #f4f6f8;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px 0;
+      }
+
+      .container {
+        background-color: #fff;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        max-width: 480px;
+        width: 90%;
+        transition: all 0.3s ease-in-out;
+      }
+
+      /* --- สไตล์สำหรับหน้าล็อกอิน --- */
+      .login-view h1 {
+        color: #3498db;
+        margin-top: 0;
+        margin-bottom: 20px;
+      }
+      .login-view p {
+        color: #555;
+        margin-bottom: 25px;
+      }
+      .instructions-box {
+        background-color: #eaf4fd;
+        border-left: 5px solid #3498db;
+        border-radius: 6px;
+        padding: 15px 20px;
+        margin-bottom: 25px;
+        text-align: left;
+      }
+      .instructions-box h3 {
+        margin-top: 0;
+        color: #2c7ab0;
+        font-size: 1.1em;
+      }
+      .instructions-box ul {
+        padding-left: 20px;
+        margin-bottom: 0;
+        color: #333;
+      }
+      .instructions-box li {
+        margin-bottom: 8px;
+        line-height: 1.5;
+      }
+      .login-view input[type="text"] {
+        display: block;
+        width: 100%;
+        padding: 14px;
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        box-sizing: border-box;
+        font-size: 16px;
+        font-family: "Sarabun", sans-serif;
+      }
+      .login-view button {
+        background-color: #3498db;
+        color: white;
+        padding: 14px 25px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        width: 100%;
+        transition: background-color 0.3s ease;
+      }
+      .login-view button:hover {
+        background-color: #2980b9;
+      }
+
+      /* --- สไตล์สำหรับหน้าแสดงผลข้อมูล --- */
+      .success-view {
+        text-align: left;
+      }
+      .success-view h1 {
+        color: #2ecc71;
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 10px;
+      }
+      .status-verified {
+        text-align: center;
+        color: #27ae60;
+        font-weight: bold;
+        margin-bottom: 30px;
+      }
+      .credential-item {
+        margin-bottom: 20px;
+      }
+      .credential-item label {
+        display: block;
+        color: #555;
+        font-weight: bold;
+        margin-bottom: 8px;
+      }
+      .credential-box {
+        background-color: #f9f9f9;
+        border: 1px solid #eee;
+        border-radius: 6px;
+        padding: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .credential-value {
+        font-size: 16px;
+        color: #333;
+        word-break: break-all;
+        margin-right: 15px;
+      }
+      .copy-btn {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 10px 15px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      .link-instructions {
+        text-align: center;
+        margin-top: 30px;
+      }
+      .link-instructions a {
+        color: #3498db;
+        text-decoration: none;
+        font-weight: bold;
+        cursor: pointer; /* ทำให้เป็นรูปมือเมื่อชี้ */
+      }
+      hr {
+        border: none;
+        border-top: 1px solid #eee;
+        margin: 35px 0;
+      }
+      .freebie-section {
+        text-align: center;
+      }
+      .freebie-title {
+        font-size: 1.2em;
+        font-weight: bold;
+        color: #e67e22;
+        margin-bottom: 15px;
+      }
+      .freebie-box {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        padding: 15px;
+        border-radius: 8px;
+      }
+      .freebie-product {
+        background-color: #fff8e1;
+        color: #c27800;
+        border: 1px dashed #f1c40f;
+      }
+      .freebie-none {
+        background-color: #f3f4f6;
+        color: #6b7280;
+        justify-content: center;
+      }
+      .claim-btn {
+        background-color: #e67e22;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .logout-btn {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        background-color: #e74c3c;
+        color: white;
+        text-align: center;
+        padding: 12px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: bold;
+        margin-top: 25px;
+        cursor: pointer;
+      }
+      .swal-claim-box {
+        margin-bottom: 1rem;
+        text-align: left;
+      }
+      .swal-claim-label {
+        font-weight: bold;
+        color: #555;
+        display: block;
+        margin-bottom: 0.25rem;
+      }
+      .swal-claim-value {
+        background: #f1f1f1;
+        padding: 8px 12px;
+        border-radius: 4px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .swal-copy-btn {
+        background: #3498db;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 5px 10px;
+        font-size: 12px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container" id="main-container"></div>
+
+    <script>
+      // ==========================================================
+      //  สำคัญ! แก้ไข API URL ของคุณที่นี่
+      // ==========================================================
+      const API_URL =
+        "https://script.google.com/macros/s/AKfycbzTZHRMZDCAL3uh5q40scqkYjl2U9jGhxYmKwTg4WrwQPdeF7M66P6Eb_rYETcGlOiC/exec";
+
+      const mainContainer = document.getElementById("main-container");
+
+      function renderLoginView() {
+        mainContainer.className = "container login-view";
+        mainContainer.innerHTML = `
+                <h1>ดูรหัสผ่าน Goodnotes 6</h1>
+                <p>กรุณาเข้าสู่ระบบเพื่อดูข้อมูลและรับสินค้าฟรี</p>
+                <div class="instructions-box">
+                    <h3>💡 วิธีการเข้าสู่ระบบ</h3>
+                    <ul>
+                        <li>กรอก <strong>ชื่อ</strong> ตามที่ลูกค้าตั้งใว้ในไลน์กลุ่มเคลม</li>
+                        <li>ตรวจสอบความถูกต้องของตัวสะกดและเว้นวรรคให้ตรงกัน</li>
+                        <li>หากระบบเเจ้งว่า <strong>ยังไม่ยืนยันตัวตน</strong> ให้ลูกค้าติดต่อเเอดมินได้เลยค่ะ</li>
+                        <li>หากระบบเเจ้งว่า <strong>เกิดข้อผิดพลาด ไม่พบชื่อในระบบ</strong> ลูกค้ายังไม่เเจ้งอุปกรณ์เข้าใช้งาน/งดวีน</li>
+                    </ul>
+                </div>
+                <form id="loginForm">
+                    <input type="text" id="customerName" placeholder="กรอกชื่อ-นามสกุลของคุณที่นี่" required>
+                    <button type="submit">เข้าสู่ระบบ</button>
+                </form>
+            `;
+        document
+          .getElementById("loginForm")
+          .addEventListener("submit", handleLogin);
+      }
+
+      function renderSuccessView(userData, freebieData) {
+        mainContainer.className = "container success-view";
+        const freebieHtml = freebieData
+          ? `
+                <div class="freebie-box freebie-product">
+                    <span>${freebieData.productName}</span>
+                    <button class="claim-btn" onclick="claimFreebie('${freebieData.productName}', '${freebieData.email}', '${freebieData.password}')">รับของ</button>
+                </div>`
+          : `<div class="freebie-box freebie-none">ยังไม่มีสินค้าฟรีสำหรับคุณในขณะนี้</div>`;
+
+        mainContainer.innerHTML = `
+                <h1>ยินดีต้อนรับ</h1>
+                <div class="status-verified">สถานะ: ยืนยันตัวตนแล้ว</div>
+                <div class="credential-item">
+                    <label>อีเมล (Goodnotes):</label>
+                    <div class="credential-box"><span>${userData.email}</span><button class="copy-btn" onclick="copyToClipboard('อีเมล Goodnotes', '${userData.email}')">คัดลอก</button></div>
+                </div>
+                <div class="credential-item">
+                    <label>รหัสผ่าน (Goodnotes):</label>
+                    <div class="credential-box"><span>${userData.password}</span><button class="copy-btn" onclick="copyToClipboard('รหัสผ่าน Goodnotes', '${userData.password}')">คัดลอก</button></div>
+                </div>
+                <div class="link-instructions"><a onclick="showHelpVideo()">วิธีการเข้าใช้งาน</a></div>
+                <hr>
+                <div class="freebie-section">
+                    <div class="freebie-title">🎁 สินค้าฟรีสำหรับคุณ</div>
+                    ${freebieHtml}
+                </div>
+                <a onclick="logout()" class="logout-btn">ออกจากระบบ</a>
+            `;
+      }
+
+      async function handleLogin(event) {
+        event.preventDefault();
+        const name = document.getElementById("customerName").value;
+
+        Swal.fire({
+          title: "กำลังตรวจสอบข้อมูล",
+          didOpen: () => {
+            Swal.showLoading();
+          },
+        });
+
+        try {
+          const response = await fetch(API_URL, {
+            method: "POST",
+            mode: "cors",
+            redirect: "follow",
+            body: JSON.stringify({ name: name }),
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+          });
+
+          const result = await response.json();
+          Swal.close();
+
+          if (result.status === "success") {
+            renderSuccessView(result.userData, result.freebieData);
+          } else if (result.status === "unverified") {
+            Swal.fire("ยังไม่ยืนยันตัวตน", result.message, "warning");
+          } else {
+            Swal.fire("เกิดข้อผิดพลาด", result.message, "error");
+          }
+        } catch (error) {
+          Swal.fire("การเชื่อมต่อผิดพลาด", error.toString(), "error");
+        }
+      }
+
+      function copyToClipboard(typeName, textToCopy) {
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          Swal.fire({
+            icon: "success",
+            title: "คัดลอกแล้ว!",
+            text: `${typeName} ถูกคัดลอกเรียบร้อย`,
+            timer: 1500,
+            showConfirmButton: false,
+          });
+        });
+      }
+
+      function claimFreebie(productName, email, password) {
+        Swal.fire({
+          icon: "success",
+          title: "รับสินค้าฟรีสำเร็จ!",
+          html: `
+                  <p>คุณได้รับ <strong>${productName}</strong> เรียบร้อยแล้ว</p>
+                  <hr>
+                  <p>ใช้ข้อมูลด้านล่างนี้เพื่อเข้าสู่ระบบสินค้า:</p>
+                  <div class="swal-claim-box">
+                    <label class="swal-claim-label">อีเมล:</label>
+                    <div class="swal-claim-value">
+                      <span>${email}</span>
+                      <button class="swal-copy-btn" onclick="copyToClipboard('อีเมล', '${email}')">คัดลอก</button>
+                    </div>
+                  </div>
+                  <div class="swal-claim-box">
+                    <label class="swal-claim-label">รหัสผ่าน:</label>
+                    <div class="swal-claim-value">
+                      <span>${password}</span>
+                      <button class="swal-copy-btn" onclick="copyToClipboard('รหัสผ่าน', '${password}')">คัดลอก</button>
+                    </div>
+                  </div>
+                `,
+          confirmButtonText: "ปิด",
+        });
+      }
+
+      function logout() {
+        Swal.fire({
+          title: "ออกจากระบบสำเร็จ",
+          icon: "success",
+          timer: 1000,
+          showConfirmButton: false,
+          willClose: () => {
+            renderLoginView();
+          },
+        });
+      }
+
+      // ========== จุดที่แก้ไข 2: เพิ่มฟังก์ชันสำหรับแสดงวิดีโอ ==========
+      function showHelpVideo() {
+        // แปลงลิงก์ Google Drive ให้เป็นลิงก์สำหรับฝัง (embed)
+        const videoId = "1AdEoE6-xMx1osHX-1pjDYGbXEsT47PSj";
+        const embedUrl = `https://drive.google.com/file/d/${videoId}/preview`;
+
+        Swal.fire({
+          title: "วิธีการเข้าใช้งาน",
+          html: `<iframe src="${embedUrl}" width="100%" height="400" frameborder="0" allowfullscreen></iframe>`,
+          width: "90%",
+          padding: "1em",
+          showCloseButton: true,
+          showConfirmButton: false,
+        });
+      }
+
+      renderLoginView();
+    </script>
+  </body>
+</html>
